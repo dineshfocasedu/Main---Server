@@ -57,6 +57,10 @@ export async function createOrder(req, res) {
       key: process.env.RAZORPAY_KEY_ID,
     });
   } catch (err) {
+     // Razorpay SDK errors don't have .message — they nest under .error
+  const message = err?.error?.description || err?.message || 'Unknown error';
+  console.error('❌ create-order failed:', JSON.stringify(err?.error || err));
+  res.status(500).json({ error: message });
     res.status(500).json({ error: err.message });
   }
 }
